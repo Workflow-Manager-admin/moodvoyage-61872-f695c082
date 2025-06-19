@@ -1,10 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // PUBLIC_INTERFACE
 function HomePage() {
   /*
     Homepage hero and future-sections as a standalone routed page.
   */
+  const navigate = useNavigate();
+
+  const handlePlanTripClick = () => {
+    // Navigate to the /planner page using React Router
+    navigate('/planner');
+  };
+
   return (
     <div className="container">
       {/* Homepage Hero Section */}
@@ -14,7 +22,9 @@ function HomePage() {
         <div className="description">
           MoodVoyage helps you find the perfect trip for your mood, budget, and style. Let our AI inspire your next adventure!
         </div>
-        <button className="btn btn-large btn-primary">Plan a Trip</button>
+        <button className="btn btn-large btn-primary" onClick={handlePlanTripClick}>
+          Plan a Trip
+        </button>
       </section>
 
       {/* Placeholders for Future Features */}
