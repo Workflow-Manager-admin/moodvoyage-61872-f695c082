@@ -3,21 +3,8 @@ import './App.css';
 import Navbar from './Navbar';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './HomePage';
-
-// Simple placeholder Trip Planner page
-function TripPlannerPage() {
-  return (
-    <div className="container">
-      <section className="hero moodvoyage-hero">
-        <div className="subtitle">Trip Planner</div>
-        <h1 className="title">Start Planning Your Trip</h1>
-        <div className="description">
-          The trip planner page is under construction. Check back soon for full planning features!
-        </div>
-      </section>
-    </div>
-  );
-}
+import TripPlanner from './TripPlanner';
+import './TripPlanner.css';
 
 // Simple placeholder Sign-In page
 function SignInPage() {
@@ -34,12 +21,12 @@ function SignInPage() {
   );
 }
 
-// PUBLIC_INTERFACE
+/*
+  PUBLIC_INTERFACE
+  Main Container for MoodVoyage:
+    - Uses React Router for multipage navigation (Home, Trip Planner, Sign-In)
+*/
 function App() {
-  /*
-    Main Container for MoodVoyage:
-      - Uses React Router for multipage navigation (Home, Trip Planner, Sign-In)
-  */
   return (
     <div className="app moodvoyage-theme">
       {/* Navigation Bar */}
@@ -48,7 +35,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/trip-planner" element={<TripPlannerPage />} />
+          <Route path="/planner" element={<TripPlanner />} />
           <Route path="/sign-in" element={<SignInPage />} />
         </Routes>
       </main>

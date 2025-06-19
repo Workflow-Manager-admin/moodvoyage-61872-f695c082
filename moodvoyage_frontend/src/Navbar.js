@@ -48,7 +48,7 @@ function Navbar() {
             Home
           </Link>
           <Link
-            to="/trip-planner"
+            to="/planner"
             className="navbar-link"
             style={{ color: 'var(--mv-primary)' }}
             onClick={handleNavLinkClick}
