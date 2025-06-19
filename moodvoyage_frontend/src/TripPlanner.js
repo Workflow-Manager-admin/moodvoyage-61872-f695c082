@@ -28,15 +28,31 @@ const BUDGETS = [
   { value: 'high', label: 'High (₹₹₹)' }
 ];
 
-// Distance buckets in kilometers
-const DISTANCES = [
-  { value: '', label: 'Select distance' },
-  { value: '50', label: 'Within 50 km (Local)' },
-  { value: '150', label: 'Within 150 km (Short drive/train)' },
-  { value: '400', label: 'Within 400 km (Long weekend trip)' },
-  { value: '1000', label: 'Up to 1000 km (Across region)' },
-  { value: '3000', label: '3000+ km (Anywhere in India)' }
+// PUBLIC_INTERFACE
+// Defines distance options per trip duration (in kilometers).
+const DURATION_OPTIONS = [
+  { value: '', label: 'Select trip duration' },
+  { value: '2', label: '2-day Weekend' },
+  { value: '3', label: '3-day Weekend' }
 ];
+const DISTANCES_BY_DURATION = {
+  "2": [
+    { value: '', label: 'Select distance' },
+    { value: '50', label: 'Within 50 km (Very local)' },
+    { value: '150', label: 'Within 150 km (Same city or quick drive)' },
+    { value: '400', label: 'Within 400 km (One overnight possible)' }
+    // Max realistic for 2-day: 400km approx
+  ],
+  "3": [
+    { value: '', label: 'Select distance' },
+    { value: '50', label: 'Within 50 km (Very local)' },
+    { value: '150', label: 'Within 150 km (Short drive/train)' },
+    { value: '400', label: 'Within 400 km (Long weekend trip)' },
+    { value: '1000', label: 'Up to 1000 km (Across region)' },
+    { value: '3000', label: '3000+ km (Anywhere in India)' }
+    // For 3-day, longer trips fit better
+  ]
+};
 
 // Helper to assign "distance" attribute (km) to samples depending on location
 function getSampleDistance(loc) {
@@ -312,10 +328,14 @@ function fakeAISuggestions({ mood, budget, travelDistance }) {
   return shuffle(filtered).slice(0, 3);
 }
 
-// PUBLIC_INTERFACE
+/*
+  PUBLIC_INTERFACE
+  TripPlanner component with support for weekend duration (2 or 3 days).
+*/
 function TripPlanner() {
-  // State for user form data, now with travelDistance instead of location
+  // State for form data (including tripDuration)
   const [form, setForm] = useState({
+    tripDuration: '', // "2" or "3"
     mood: '',
     budget: '',
     travelDistance: '',
@@ -325,9 +345,16 @@ function TripPlanner() {
   const [suggestions, setSuggestions] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
 
+  // Update trip planner form, clearing downstreams if duration changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    // If tripDuration is changed, reset travelDistance as well
+    setForm((prev) => {
+      if (name === "tripDuration") {
+        return { ...prev, tripDuration: value, travelDistance: "" };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   // PUBLIC_INTERFACE
@@ -419,7 +446,33 @@ function TripPlanner() {
         <div className="description" style={{ marginBottom: 12 }}>
           Tell us your preferences and let MoodVoyage inspire your next getaway!
         </div>
-        <form className="trip-form" onSubmit={handleSubmit} style={{ width: '100%', margin: '14px 0' }} autoComplete="off">
+        <form
+          className="trip-form"
+          onSubmit={handleSubmit}
+          style={{ width: '100%', margin: '14px 0' }}
+          autoComplete="off"
+        >
+          {/* Trip Duration Selector */}
+          <div className="form-group" style={{ marginBottom: 14 }}>
+            <label htmlFor="tripDuration" className="planner-label">Trip Duration</label>
+            <select
+              id="tripDuration"
+              name="tripDuration"
+              value={form.tripDuration}
+              onChange={handleChange}
+              className="planner-input"
+              required
+              aria-label="Select trip duration"
+              disabled={loading}
+            >
+              {DURATION_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* Mood */}
           <div className="form-group" style={{ marginBottom: 14 }}>
             <label htmlFor="mood" className="planner-label">Mood</label>
             <select
@@ -439,6 +492,7 @@ function TripPlanner() {
               ))}
             </select>
           </div>
+          {/* Budget */}
           <div className="form-group" style={{ marginBottom: 14 }}>
             <label htmlFor="budget" className="planner-label">Budget</label>
             <select
@@ -458,6 +512,7 @@ function TripPlanner() {
               ))}
             </select>
           </div>
+          {/* Travel Distance Options Contextual to Duration */}
           <div className="form-group" style={{ marginBottom: 16 }}>
             <label htmlFor="travelDistance" className="planner-label">
               Travel Distance
@@ -473,15 +528,20 @@ function TripPlanner() {
               className="planner-input"
               required
               aria-label="Select travel distance"
-              disabled={loading}
+              disabled={loading || !form.tripDuration}
             >
-              {DISTANCES.map(opt => (
-                <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
-                  {opt.label}
-                </option>
-              ))}
+              {/* Default if duration not selected */}
+              {!form.tripDuration
+                ? <option value="">Choose trip duration first</option>
+                : DISTANCES_BY_DURATION[form.tripDuration].map(opt =>
+                  <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
+                    {opt.label}
+                  </option>
+                )
+              }
             </select>
           </div>
+          {/* Submit Button */}
           <button
             type="submit"
             className="btn btn-large btn-primary"
@@ -498,21 +558,23 @@ function TripPlanner() {
           </button>
         </form>
         {/* Dynamic AI Suggestions */}
-        <div className="ai-suggestions" style={{
-          background: 'rgba(74,144,226,0.05)',
-          marginTop: 20,
-          width: '100%',
-          borderRadius: 8,
-          minHeight: 75,
-          display: 'flex',
-          alignItems: hasSearched && !loading ? 'flex-start' : 'center',
-          justifyContent: 'center',
-          border: '1px solid var(--border-color)',
-          color: 'var(--mv-primary)',
-          fontWeight: 500,
-          fontSize: '1.07rem',
-          padding: hasSearched && !loading ? '17px 0' : '0'
-        }}>
+        <div
+          className="ai-suggestions"
+          style={{
+            background: 'rgba(74,144,226,0.05)',
+            marginTop: 20,
+            width: '100%',
+            borderRadius: 8,
+            minHeight: 75,
+            display: 'flex',
+            alignItems: hasSearched && !loading ? 'flex-start' : 'center',
+            justifyContent: 'center',
+            border: '1px solid var(--border-color)',
+            color: 'var(--mv-primary)',
+            fontWeight: 500,
+            fontSize: '1.07rem',
+            padding: hasSearched && !loading ? '17px 0' : '0'
+          }}>
           {renderSuggestions()}
         </div>
       </section>

@@ -11,9 +11,9 @@ asset bundle.js 1.77 MiB [emitted] (name: main)
 asset index.html 1.98 KiB [emitted]
 runtime modules 28.7 KiB 15 modules
 modules by path ./node_modules/ 1.54 MiB 34 modules
-modules by path ./src/ 41.8 KiB
+modules by path ./src/ 42.5 KiB
   modules by path ./src/*.css 14.5 KiB 6 modules
-  modules by path ./src/*.js 27.2 KiB
+  modules by path ./src/*.js 28 KiB
     ./src/index.js 688 bytes [built] [code generated]
     + 4 modules
 modules by path ./.ve/ 15.1 KiB
@@ -22,24 +22,34 @@ modules by path ./.ve/ 15.1 KiB
     ./.ve/EditorOverlay.css 2.25 KiB [built] [code generated]
     ./node_modules/css-loader/dist/cjs.js!./.ve/EditorOverlay.css 697 bytes [built] [code generated]
   ./.ve/EditorOverlay.jsx 1.58 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 1475 ms
-assets by status 1.98 KiB [cached] 1 asset
-assets by path *.js 1.79 MiB
-  asset bundle.js 1.77 MiB [emitted] (name: main)
-  asset main.feae2fb4bc92fdf6cb7f.hot-update.js 22.5 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.feae2fb4bc92fdf6cb7f.hot-update.json 28 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.79 MiB = bundle.js 1.77 MiB main.feae2fb4bc92fdf6cb7f.hot-update.js 22.5 KiB
-cached modules 1.58 MiB [cached] 49 modules
-runtime modules 28.7 KiB 15 modules
-./src/TripPlanner.js 18.3 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 184 ms
+webpack 5.99.9 compiled successfully in 1412 ms
 assets by status 1.98 KiB [cached] 1 asset
 assets by path *.js 1.8 MiB
   asset bundle.js 1.77 MiB [emitted] (name: main)
-  asset main.45390ca75acc7bb13ed4.hot-update.js 23.2 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.45390ca75acc7bb13ed4.hot-update.json 28 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.8 MiB = bundle.js 1.77 MiB main.45390ca75acc7bb13ed4.hot-update.js 23.2 KiB
+  asset main.9d71b30df54cadfc7428.hot-update.js 23.9 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.9d71b30df54cadfc7428.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.8 MiB = bundle.js 1.77 MiB main.9d71b30df54cadfc7428.hot-update.js 23.9 KiB
 cached modules 1.58 MiB [cached] 49 modules
 runtime modules 28.7 KiB 15 modules
-./src/TripPlanner.js 18.9 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 116 ms
+./src/TripPlanner.js 19.6 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 180 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.8 MiB
+  asset bundle.js 1.77 MiB [emitted] (name: main)
+  asset main.a472e6f06a0f65a63087.hot-update.js 24.3 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.a472e6f06a0f65a63087.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.8 MiB = bundle.js 1.77 MiB main.a472e6f06a0f65a63087.hot-update.js 24.3 KiB
+cached modules 1.58 MiB [cached] 49 modules
+runtime modules 28.7 KiB 15 modules
+./src/TripPlanner.js 20 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 96 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.8 MiB
+  asset bundle.js 1.78 MiB [emitted] (name: main)
+  asset main.4c8e47c8a1dd4a143064.hot-update.js 26 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.4c8e47c8a1dd4a143064.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.8 MiB = bundle.js 1.78 MiB main.4c8e47c8a1dd4a143064.hot-update.js 26 KiB
+cached modules 1.58 MiB [cached] 49 modules
+runtime modules 28.7 KiB 15 modules
+./src/TripPlanner.js 21.3 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 82 ms
