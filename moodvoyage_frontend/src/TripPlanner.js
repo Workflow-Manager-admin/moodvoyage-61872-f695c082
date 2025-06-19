@@ -13,9 +13,9 @@ const MOODS = [
 
 const BUDGETS = [
   { value: '', label: 'Select budget' },
-  { value: 'low', label: 'Low ($)' },
-  { value: 'medium', label: 'Medium ($$)' },
-  { value: 'high', label: 'High ($$$)' }
+  { value: 'low', label: 'Low (₹)' },
+  { value: 'medium', label: 'Medium (₹₹)' },
+  { value: 'high', label: 'High (₹₹₹)' }
 ];
 
 const LOCATIONS = [
@@ -27,56 +27,166 @@ const LOCATIONS = [
   { value: 'surprise', label: 'Surprise Me!' }
 ];
 
-// Helper: generate sample trips based on choices (placeholder for real AI integration)
+/*
+  PUBLIC_INTERFACE
+  Helper: generate a broad and diverse list of sample trips (placeholder for real AI integration),
+  Expanded range for greater suggestion variety and realism.
+  All budget-related text is now in Rupees (₹) instead of dollars.
+*/
 function fakeAISuggestions({ mood, budget, location }) {
-  let samples = [
+  // Expanded sample pool with more diversity (for varied output)
+  const samples = [
     {
       title: 'Urban Foodie Adventure',
-      desc: 'Explore trending cafes, food markets, and rooftop bars in your nearest city.',
+      desc: 'Explore trending cafes, food markets, and rooftop bars in your nearest city. Typical cost: ₹4,000–₹8,000.',
       mood: 'adventurous',
       budget: 'medium',
       location: 'city'
     },
     {
       title: 'Quiet Beach Retreat',
-      desc: 'Unwind at a boutique beachside inn and enjoy sunrise yoga.',
+      desc: 'Unwind at a boutique beachside inn and enjoy sunrise yoga. Expect to spend: ₹9,000+.',
       mood: 'relaxed',
       budget: 'high',
       location: 'beach'
     },
     {
       title: 'Countryside Picnic',
-      desc: 'Pack a basket and discover local farms for a spontaneous picnic among rolling hills.',
+      desc: 'Pack a basket and discover local farms for a spontaneous picnic among rolling hills. You can enjoy this for under ₹2,000.',
       mood: 'spontaneous',
       budget: 'low',
       location: 'countryside'
     },
     {
       title: 'Romantic Mountain Cabin',
-      desc: 'Cozy up by the fire after hiking scenic trails. Perfect for couples!',
+      desc: 'Cozy up by the fire after hiking scenic trails. Perfect for couples! Budget: ₹5,000–₹10,000.',
       mood: 'romantic',
       budget: 'medium',
       location: 'mountain'
     },
     {
       title: 'Cultural City Escape',
-      desc: 'Museums, art walks, and live theater for an inspiring city break.',
+      desc: 'Museums, art walks, and live theater for an inspiring city break. Typically: ₹3,000–₹7,000.',
       mood: 'cultural',
       budget: 'medium',
       location: 'city'
+    },
+    {
+      title: 'Scenic Road Trip',
+      desc: 'Hit the road with friends – rent a car, make impromptu stops at local legends. Split costs: around ₹2,500–₹5,000/person.',
+      mood: 'adventurous',
+      budget: 'low',
+      location: 'countryside'
+    },
+    {
+      title: 'Luxury Spa Weekend',
+      desc: 'Pamper yourself at a resort spa with massages and poolside relaxation. Expect: ₹12,000+.',
+      mood: 'relaxed',
+      budget: 'high',
+      location: 'city'
+    },
+    {
+      title: 'Mountain Trekking Challenge',
+      desc: 'Test your limits on a guided mountain trek. Group discounts available! Budget: ₹3,500–₹6,000.',
+      mood: 'adventurous',
+      budget: 'medium',
+      location: 'mountain'
+    },
+    {
+      title: 'Artisan Village Tour',
+      desc: 'Discover crafts and local culture in a nearby artisan village. Great for creative souls! Avg: ₹2,000–₹4,000.',
+      mood: 'cultural',
+      budget: 'low',
+      location: 'countryside'
+    },
+    {
+      title: 'Starry Night Camp',
+      desc: 'Camp under the stars with bonfire and music. Minimal cost: ₹1,500–₹3,000.',
+      mood: 'spontaneous',
+      budget: 'low',
+      location: 'mountain'
+    },
+    {
+      title: 'Gourmet City Date',
+      desc: 'Indulge in high-end restaurants and rooftop cocktails in the city. Plan for ₹8,000–₹15,000.',
+      mood: 'romantic',
+      budget: 'high',
+      location: 'city'
+    },
+    {
+      title: 'Peaceful Lakeside Resort',
+      desc: 'Escape busy life with a lakeside cottage, boating and quiet mornings. Around ₹7,000–₹12,000.',
+      mood: 'relaxed',
+      budget: 'medium',
+      location: 'countryside'
+    },
+    {
+      title: 'Surprise Adventure!',
+      desc: 'Pack your bags and let spontaneity take the wheel – let each stop be decided by a coin flip! Budget: flexible, often under ₹3,000.',
+      mood: 'spontaneous',
+      budget: 'low',
+      location: 'surprise'
+    },
+    {
+      title: 'Sunset Beach Dinner',
+      desc: 'Enjoy a private sunset dinner on the sand with music and laughter. From ₹5,000 upwards.',
+      mood: 'romantic',
+      budget: 'medium',
+      location: 'beach'
+    },
+    {
+      title: 'Creative City Photo Walk',
+      desc: 'Stroll through street art districts and snap your weekend memories. Usually under ₹2,500.',
+      mood: 'cultural',
+      budget: 'low',
+      location: 'city'
+    },
+    {
+      title: 'Luxury Countryside Escape',
+      desc: 'Stay in a heritage villa with green gardens. Gourmet meals. Around ₹10,000–₹20,000.',
+      mood: 'relaxed',
+      budget: 'high',
+      location: 'countryside'
     }
   ];
 
-  // Simple match filter. If "surprise", give any random item.
-  if (location === 'surprise') return [samples[Math.floor(Math.random() * samples.length)]];
-  let filtered = samples.filter(
-    s =>
-      (mood ? s.mood === mood : true) &&
-      (budget ? s.budget === budget : true) &&
-      (location && location !== '' ? s.location === location : true)
-  );
-  // Always at least one suggestion (fallback to sample list if none match)
-  return filtered.length ? filtered : samples.slice(0, 1);
+  // Randomize array helper
+  function shuffle(arr) {
+    return arr.slice().sort(() => Math.random() - 0.5);
+  }
+
+  // Helper: filter samples for the best matches
+  let filtered;
+  if (location === 'surprise') {
+    // Show a set of random fun ideas (3)
+    filtered = shuffle(samples).slice(0, 3);
+  } else {
+    filtered = samples.filter(
+      s =>
+        (mood ? s.mood === mood : true) &&
+        (budget ? s.budget === budget : true) &&
+        (location && location !== '' ? s.location === location : true)
+    );
+    // If too few, supplement from pool of different ones (same budget/mood type, diff location)
+    if (filtered.length < 3) {
+      const supplement = shuffle(
+        samples.filter(
+          s =>
+            (mood ? s.mood === mood : true) &&
+            (budget ? s.budget === budget : true) &&
+            (location && location !== '' ? s.location !== location : true)
+        )
+      ).slice(0, 3 - filtered.length);
+      filtered = filtered.concat(supplement);
+    }
+    // Still less than 3, just give random ones
+    if (filtered.length < 3) {
+      filtered = filtered.concat(shuffle(samples).slice(0, 3 - filtered.length));
+    }
+    // Randomize visual order for freshness
+    filtered = shuffle(filtered).slice(0, 3);
+  }
+  return filtered;
 }
 
 // PUBLIC_INTERFACE
