@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
 import './App.css';
 
-// Options for dropdowns (can be modified for future dynamic/AI population)
+/*
+  Expanded set of moods for creative trip planning.
+  This aligns with the MoodVoyage goal: more relevant, fun, and personalized choices!
+*/
 const MOODS = [
   { value: '', label: 'Select your mood' },
   { value: 'adventurous', label: 'Adventurous' },
   { value: 'relaxed', label: 'Relaxed' },
   { value: 'romantic', label: 'Romantic' },
   { value: 'cultural', label: 'Cultural' },
-  { value: 'spontaneous', label: 'Spontaneous' }
+  { value: 'wellness', label: 'Wellness' },
+  { value: 'nature', label: 'Nature Connection' },
+  { value: 'festive', label: 'Festive' },
+  { value: 'spontaneous', label: 'Spontaneous' },
+  { value: 'creative', label: 'Creative' },
+  { value: 'family', label: 'Family Fun' },
+  { value: 'solo', label: 'Solo Recharge' },
+  { value: 'foodie', label: 'Foodie' }
 ];
 
 const BUDGETS = [
@@ -18,217 +28,279 @@ const BUDGETS = [
   { value: 'high', label: 'High (₹₹₹)' }
 ];
 
+/*
+  Expanded and more realistic set of possible destinations/topics.
+  - Now includes major Indian cities as well as regional, nature, and surprise categories.
+*/
 const LOCATIONS = [
   { value: '', label: 'Anywhere' },
-  { value: 'beach', label: 'Beach' },
-  { value: 'mountain', label: 'Mountain' },
-  { value: 'city', label: 'City/Urban' },
-  { value: 'countryside', label: 'Countryside' },
+  { value: 'mumbai', label: 'Mumbai' },
+  { value: 'goa', label: 'Goa' },
+  { value: 'bangalore', label: 'Bangalore' },
+  { value: 'delhi', label: 'Delhi' },
+  { value: 'jaipur', label: 'Jaipur' },
+  { value: 'kerala', label: 'Kerala (Backwaters)' },
+  { value: 'ladakh', label: 'Ladakh' },
+  { value: 'darjeeling', label: 'Darjeeling' },
+  { value: 'varanasi', label: 'Varanasi' },
+  { value: 'rann', label: 'Rann of Kutch' },
+  { value: 'rishikesh', label: 'Rishikesh' },
+  { value: 'ooty', label: 'Ooty Hills' },
+  { value: 'beach', label: 'Any Beach' },
+  { value: 'mountain', label: 'Any Mountain' },
+  { value: 'festival', label: 'Festival Hotspot' },
+  { value: 'wilderness', label: 'Wildlife/Nature Park' },
+  { value: 'heritage', label: 'Heritage Site' },
+  { value: 'countryside', label: 'Countryside Retreat' },
   { value: 'surprise', label: 'Surprise Me!' }
 ];
 
 /*
   PUBLIC_INTERFACE
-  Helper: generate a broad and diverse list of sample trips (placeholder for real AI integration),
-  Expanded range for greater suggestion variety and realism.
-  All budget-related text is now in Rupees (₹) instead of dollars.
+  Expanded AI-like trip suggestion logic.
+  Includes more moods, locations, and broader matching for engaging, relevant trip ideas.
 */
 function fakeAISuggestions({ mood, budget, location }) {
-  // Expanded sample pool with more diversity (for varied output)
   const samples = [
     {
-      title: 'Urban Foodie Adventure',
-      desc: 'Explore trending cafes, food markets, and rooftop bars in your nearest city. Typical cost: ₹4,000–₹8,000.',
-      mood: 'adventurous',
+      title: 'Urban Foodie Adventure, Mumbai',
+      desc: 'Discover street food, trendy cafes, Old Town market walks, and night bazaars. Typical cost: ₹4,000–₹8,000.',
+      mood: 'foodie',
       budget: 'medium',
-      location: 'city'
+      location: 'mumbai'
     },
     {
-      title: 'Quiet Beach Retreat',
-      desc: 'Unwind at a boutique beachside inn and enjoy sunrise yoga. Expect to spend: ₹9,000+.',
-      mood: 'relaxed',
-      budget: 'high',
-      location: 'beach'
-    },
-    {
-      title: 'Countryside Picnic',
-      desc: 'Pack a basket and discover local farms for a spontaneous picnic among rolling hills. You can enjoy this for under ₹2,000.',
-      mood: 'spontaneous',
-      budget: 'low',
-      location: 'countryside'
-    },
-    {
-      title: 'Romantic Mountain Cabin',
-      desc: 'Cozy up by the fire after hiking scenic trails. Perfect for couples! Budget: ₹5,000–₹10,000.',
-      mood: 'romantic',
+      title: 'Yoga & Wellness Retreat, Rishikesh',
+      desc: 'Enjoy riverbank yoga, meditation, nature hikes, and healthy cuisine. Packages: ₹5,000–₹9,000.',
+      mood: 'wellness',
       budget: 'medium',
-      location: 'mountain'
+      location: 'rishikesh'
     },
     {
-      title: 'Cultural City Escape',
-      desc: 'Museums, art walks, and live theater for an inspiring city break. Typically: ₹3,000–₹7,000.',
-      mood: 'cultural',
-      budget: 'medium',
-      location: 'city'
-    },
-    {
-      title: 'Scenic Road Trip',
-      desc: 'Hit the road with friends – rent a car, make impromptu stops at local legends. Split costs: around ₹2,500–₹5,000/person.',
-      mood: 'adventurous',
-      budget: 'low',
-      location: 'countryside'
-    },
-    {
-      title: 'Luxury Spa Weekend',
-      desc: 'Pamper yourself at a resort spa with massages and poolside relaxation. Expect: ₹12,000+.',
-      mood: 'relaxed',
-      budget: 'high',
-      location: 'city'
-    },
-    {
-      title: 'Mountain Trekking Challenge',
-      desc: 'Test your limits on a guided mountain trek. Group discounts available! Budget: ₹3,500–₹6,000.',
-      mood: 'adventurous',
-      budget: 'medium',
-      location: 'mountain'
-    },
-    {
-      title: 'Artisan Village Tour',
-      desc: 'Discover crafts and local culture in a nearby artisan village. Great for creative souls! Avg: ₹2,000–₹4,000.',
-      mood: 'cultural',
-      budget: 'low',
-      location: 'countryside'
-    },
-    {
-      title: 'Starry Night Camp',
-      desc: 'Camp under the stars with bonfire and music. Minimal cost: ₹1,500–₹3,000.',
-      mood: 'spontaneous',
-      budget: 'low',
-      location: 'mountain'
-    },
-    {
-      title: 'Gourmet City Date',
-      desc: 'Indulge in high-end restaurants and rooftop cocktails in the city. Plan for ₹8,000–₹15,000.',
+      title: 'Romantic Houseboat Stay, Kerala Backwaters',
+      desc: 'Sail on a private houseboat with sunset dinners and lush views. From: ₹11,000+ per couple.',
       mood: 'romantic',
       budget: 'high',
-      location: 'city'
+      location: 'kerala'
     },
     {
-      title: 'Peaceful Lakeside Resort',
-      desc: 'Escape busy life with a lakeside cottage, boating and quiet mornings. Around ₹7,000–₹12,000.',
+      title: 'Mountain Trek & Starry Skies, Ladakh',
+      desc: 'Conquer high passes, spend nights stargazing, and campfires with friends. Cost: ₹7,000–₹12,000.',
+      mood: 'adventurous',
+      budget: 'medium',
+      location: 'ladakh'
+    },
+    {
+      title: 'Heritage Jaipur Festival',
+      desc: 'Immerse in Jaipur’s palaces, local crafts, and dazzling festivals. Expect: ₹6,000–₹10,000.',
+      mood: 'festive',
+      budget: 'medium',
+      location: 'jaipur'
+    },
+    {
+      title: 'Serene Tea Gardens, Darjeeling',
+      desc: 'Stay at a heritage plantation, enjoy tea tastings and sunrise on the hills. From: ₹4,000–₹7,000.',
+      mood: 'nature',
+      budget: 'medium',
+      location: 'darjeeling'
+    },
+    {
+      title: 'Wildlife Safari, Ranthambore',
+      desc: 'Go on a jungle safari, spot tigers and unwind in eco-lodges. Around ₹7,500–₹13,000.',
+      mood: 'nature',
+      budget: 'high',
+      location: 'wilderness'
+    },
+    {
+      title: 'Creative Photography Walk, Bangalore',
+      desc: 'Street art, city markets, and architectural hidden gems guided tour. Avg: ₹2,000–₹4,000.',
+      mood: 'creative',
+      budget: 'low',
+      location: 'bangalore'
+    },
+    {
+      title: 'Festive Lights in Delhi',
+      desc: 'Experience festivals, food carnivals, and city lights with buzzing energy. Plan for ₹3,500–₹7,000.',
+      mood: 'festive',
+      budget: 'medium',
+      location: 'delhi'
+    },
+    {
+      title: 'Peaceful Lakeside Ooty',
+      desc: 'Wake up to misty mornings, go boating and stroll botanical gardens. From ₹5,000–₹10,000.',
       mood: 'relaxed',
       budget: 'medium',
-      location: 'countryside'
+      location: 'ooty'
     },
     {
-      title: 'Surprise Adventure!',
-      desc: 'Pack your bags and let spontaneity take the wheel – let each stop be decided by a coin flip! Budget: flexible, often under ₹3,000.',
+      title: 'Spontaneous Road Trip – The Open Road',
+      desc: 'Decide each stop as you go: flip a coin for left or right! Budget: ₹2,000–₹5,000.',
       mood: 'spontaneous',
       budget: 'low',
       location: 'surprise'
     },
     {
-      title: 'Sunset Beach Dinner',
-      desc: 'Enjoy a private sunset dinner on the sand with music and laughter. From ₹5,000 upwards.',
-      mood: 'romantic',
+      title: 'Artisan Village Tour, Countryside',
+      desc: 'Discover local crafts, pottery lessons, and tradition. Under ₹2,500.',
+      mood: 'cultural',
+      budget: 'low',
+      location: 'countryside'
+    },
+    {
+      title: 'Luxury Spa Getaway, Goa',
+      desc: 'Pamper yourself with ocean-view massages and gourmet meals. Expect: ₹13,000+.',
+      mood: 'wellness',
+      budget: 'high',
+      location: 'goa'
+    },
+    {
+      title: 'Family Safari Adventure — Rann of Kutch',
+      desc: 'Salt flats jeep rides, flamingo festivals, camel treks. Fun for all ages! From ₹9,000.',
+      mood: 'family',
+      budget: 'medium',
+      location: 'rann'
+    },
+    {
+      title: 'River Rafting Pulse, Rishikesh',
+      desc: 'Adrenaline-pumping rafting, cliff diving, and riverside camping. Cost: ₹3,000–₹6,000.',
+      mood: 'adventurous',
+      budget: 'low',
+      location: 'rishikesh'
+    },
+    {
+      title: 'Wellness Spa – Any Mountain Retreat',
+      desc: 'Therapeutic massages, hikes, and digital detox with towering views. Around ₹7,000–₹11,000.',
+      mood: 'wellness',
+      budget: 'medium',
+      location: 'mountain'
+    },
+    {
+      title: 'City Shopping Spree, Delhi',
+      desc: 'Haute couture, street bazaars, and gourmet food stops. Budget: ₹5,000–₹12,000.',
+      mood: 'creative',
+      budget: 'medium',
+      location: 'delhi'
+    },
+    {
+      title: 'Solo Artist Retreat, Ooty',
+      desc: 'Private cabin, painting workshop, forest walks. Reconnect solo! ₹8,000–₹13,000.',
+      mood: 'solo',
+      budget: 'medium',
+      location: 'ooty'
+    },
+    {
+      title: 'Night Beach Carnival, Goa',
+      desc: 'Dance, music, fun games for all at the festive shore. From ₹6,000+.',
+      mood: 'festive',
       budget: 'medium',
       location: 'beach'
     },
     {
-      title: 'Creative City Photo Walk',
-      desc: 'Stroll through street art districts and snap your weekend memories. Usually under ₹2,500.',
-      mood: 'cultural',
+      title: 'Sunset Beach Dinner',
+      desc: 'Enjoy a private sunset dinner with music and laughter right by the waves. From ₹5,000 upwards.',
+      mood: 'romantic',
+      budget: 'medium',
+      location: 'beach'
+    },
+    // Some generic 'Any...' style fallback options
+    {
+      title: 'Surprise Adventure!',
+      desc: 'Pack your bags for a mystery weekend – destination revealed by dice roll! Budget: flexible, often under ₹3,000.',
+      mood: 'spontaneous',
       budget: 'low',
+      location: 'surprise'
+    },
+    {
+      title: 'City Cultural Trail',
+      desc: 'Museums, galleries, and hidden music venues for inspiring weekends. ₹3,000–₹7,000.',
+      mood: 'cultural',
+      budget: 'medium',
       location: 'city'
     },
     {
+      title: 'Mountain Trekking Challenge',
+      desc: 'Test your limits on a guided mountain trek. Group discounts! Budget: ₹4,000–₹8,000.',
+      mood: 'adventurous',
+      budget: 'medium',
+      location: 'mountain'
+    },
+    {
       title: 'Luxury Countryside Escape',
-      desc: 'Stay in a heritage villa with green gardens. Gourmet meals. Around ₹10,000–₹20,000.',
+      desc: 'Stay in a heritage villa with foot trails and gourmet food. From ₹12,000+.',
       mood: 'relaxed',
       budget: 'high',
       location: 'countryside'
     }
   ];
 
-  // Randomize array helper
+  // Shuffle helper
   function shuffle(arr) {
     return arr.slice().sort(() => Math.random() - 0.5);
   }
 
-  // Helper: filter samples for the best matches
-  let filtered;
-  if (location === 'surprise') {
-    // Show a set of random fun ideas (3)
-    filtered = shuffle(samples).slice(0, 3);
-  } else {
-    filtered = samples.filter(
-      s =>
-        (mood ? s.mood === mood : true) &&
-        (budget ? s.budget === budget : true) &&
-        (location && location !== '' ? s.location === location : true)
-    );
-    // If too few, supplement from pool of different ones (same budget/mood type, diff location)
-    if (filtered.length < 3) {
-      const supplement = shuffle(
-        samples.filter(
-          s =>
-            (mood ? s.mood === mood : true) &&
-            (budget ? s.budget === budget : true) &&
-            (location && location !== '' ? s.location !== location : true)
-        )
-      ).slice(0, 3 - filtered.length);
-      filtered = filtered.concat(supplement);
-    }
-    // Still less than 3, just give random ones
-    if (filtered.length < 3) {
-      filtered = filtered.concat(shuffle(samples).slice(0, 3 - filtered.length));
-    }
-    // Randomize visual order for freshness
-    filtered = shuffle(filtered).slice(0, 3);
+  // Tiered filter: First, try all 3 params, then relax location, then mood only
+  let filtered = samples.filter(s =>
+    (mood ? s.mood === mood : true) &&
+    (budget ? s.budget === budget : true) &&
+    (location && location !== '' ? (s.location === location || location === 'city' && ['mumbai','delhi','bangalore'].includes(s.location)) : true)
+  );
+  // Add broader matches if too few
+  if (filtered.length < 3) {
+    // Try relaxing location constraint
+    filtered = filtered.concat(shuffle(samples.filter(s =>
+      (mood ? s.mood === mood : true) &&
+      (budget ? s.budget === budget : true) &&
+      (location ? s.location !== location : true)
+    )).slice(0, 3 - filtered.length));
   }
-  return filtered;
+  if (filtered.length < 3) {
+    // Try relaxing mood constraint, at least matching budget
+    filtered = filtered.concat(shuffle(samples.filter(s =>
+      (budget ? s.budget === budget : true)
+    )).slice(0, 3 - filtered.length));
+  }
+  // If user picked surprise: just 3 random ideas
+  if (location === 'surprise' || mood === 'spontaneous') {
+    filtered = shuffle(samples).slice(0, 3);
+  }
+  // Always return randomized
+  return shuffle(filtered).slice(0, 3);
 }
 
 // PUBLIC_INTERFACE
 function TripPlanner() {
-  // Form data state
+  // State for user form data
   const [form, setForm] = useState({
     mood: '',
     budget: '',
     location: '',
   });
 
-  // UI states
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   // PUBLIC_INTERFACE
-  // Simulate submitting to an AI suggestion backend.
-  // In production, replace setTimeout/fakeAISuggestions with real API.
+  // Simulated async request; replace with API for real AI.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setHasSearched(true);
     setLoading(true);
     setSuggestions([]);
 
-    // Simulate async API (replace with API call in future)
     setTimeout(() => {
-      // [INTEGRATION POINT] Swap fakeAISuggestions() with real API fetch.
-      // Example: fetch('/api/ai-suggest', { ... })
       const result = fakeAISuggestions(form);
       setSuggestions(result);
       setLoading(false);
-    }, 1250); // Simulated latency
+    }, 1250);
   };
 
-  // UI helpers — create MoodVoyage style spinners/messages
+  // UI – Suggestions rendering with MoodVoyage visual style
   const renderSuggestions = () => {
     if (!hasSearched) {
       return (
@@ -393,7 +465,6 @@ function TripPlanner() {
         }}>
           {renderSuggestions()}
         </div>
-        {/* Future: provide an area for backend errors if API fails */}
       </section>
     </div>
   );
