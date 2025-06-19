@@ -1,0 +1,199 @@
+:root {
+  /* MoodVoyage Brand Palette */
+  --mv-primary: #4A90E2;
+  --mv-secondary: #50E3C2;
+  --mv-accent: #F5A623;
+  --mv-bg-light: #f6fafc;
+  --mv-bg-white: #ffffff;
+  --base-light: #4A90E2; /* Used for legacy style fallback */
+  --base-dark: #14233b;
+  --text-color: #222;
+  --text-secondary: #496079;
+  --border-color: #e6e9ed;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  background-color: var(--mv-bg-light);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- MoodVoyage Branding and Layout --- */
+.moodvoyage-theme {
+  background: var(--mv-bg-light);
+  color: var(--text-color);
+}
+.mv-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(120deg, var(--mv-primary) 10%, var(--mv-secondary) 70%);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+/* ---- App Layout --- */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Make room for fixed navbar */
+}
+
+.moodvoyage-navbar {
+  background: var(--mv-bg-white);
+  padding: 18px 0 18px 0;
+  border-bottom: 1px solid var(--border-color);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px 0 rgba(44, 62, 80, 0.04);
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.moodvoyage-logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--mv-primary);
+}
+
+.logo-symbol {
+  font-size: 1.6rem;
+  color: var(--mv-accent);
+}
+
+.navbar-actions {
+  display: flex;
+  gap: 14px;
+}
+
+.btn {
+  background-color: var(--mv-secondary);
+  color: #fff !important;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 4px 0 rgba(89,192,177,0.08);
+  outline: none;
+}
+
+.btn-primary,
+.btn-auth {
+  background: linear-gradient(90deg, var(--mv-primary), var(--mv-secondary));
+}
+
+.btn-large {
+  font-size: 1.16rem;
+  padding: 13px 34px;
+}
+
+/* Responsive Container */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Homepage Hero Section */
+.moodvoyage-hero {
+  margin-top: 110px;
+  padding-bottom: 56px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255,255,255,0.78);
+  border-radius: 18px;
+  box-shadow: 0 6px 32px 0 rgba(74,144,226,0.05);
+}
+
+.subtitle {
+  color: var(--mv-secondary);
+  font-weight: 500;
+  font-size: 1.12rem;
+}
+
+.title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--mv-primary);
+  line-height: 1.12;
+}
+
+.description {
+  font-size: 1.18rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 16px auto;
+}
+
+.future-sections-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 36px;
+}
+
+.future-section {
+  background: var(--mv-bg-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px 0 rgba(74,144,226,0.09);
+  min-width: 250px;
+  max-width: 320px;
+  padding: 22px 18px 18px 18px;
+  flex: 1 1 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.future-section-title {
+  color: var(--mv-primary);
+  font-size: 1.1rem;
+  margin: 0 0 7px 0;
+  font-weight: 600;
+}
+
+.future-section-desc {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .future-sections-grid {
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+  }
+  .container { padding: 0 12px; }
+  .moodvoyage-hero { margin-top: 96px; }
+}
