@@ -126,250 +126,371 @@ function getSampleDistance(loc) {
   Duration and distance together ensure plausible options for real weekend getaways.
 */
 function fakeAISuggestions({ mood, budget, travelDistance, tripDuration }) {
-  // If user is "spontaneous", skip all filters and show a surprise!
+  /**
+   * Expanded trip suggestion dataset.
+   * Each entry contains: title, desc, mood, budget, location, duration (days, array), and min/max rupees estimate.
+   * "Budget" is categorized: low ~<5k, medium ~5k-10k, high >10k.
+   * The entries are realistic for the intended Indian context and closely mapped to duration and budget constraints.
+   */
   const samples = [
+    // ADVENTUROUS
     {
-      title: 'Urban Foodie Adventure, Mumbai',
-      desc: 'Discover street food, trendy cafes, Old Town market walks, and night bazaars. Typical cost: ₹4,000–₹8,000.',
-      mood: 'foodie',
-      budget: 'medium',
-      location: 'mumbai'
+      title: 'Half-Day Trek at Sanjay Gandhi National Park, Mumbai',
+      desc: 'Short morning trek, breakfast picnic, and Kanheri caves exploration. Day-trip: ₹800–₹2,500.',
+      mood: 'adventurous',
+      budget: 'low',
+      location: 'mumbai',
+      duration: [1]
     },
     {
-      title: 'Yoga & Wellness Retreat, Rishikesh',
-      desc: 'Enjoy riverbank yoga, meditation, nature hikes, and healthy cuisine. Packages: ₹5,000–₹9,000.',
-      mood: 'wellness',
-      budget: 'medium',
-      location: 'rishikesh'
+      title: 'River Rafting & Cliff-Jumping, Rishikesh',
+      desc: 'Thrilling one-day river rafting, cliff-diving and riverside lunch. From ₹2,000.',
+      mood: 'adventurous',
+      budget: 'low',
+      location: 'rishikesh',
+      duration: [1, 2]
     },
     {
-      title: 'Romantic Houseboat Stay, Kerala Backwaters',
-      desc: 'Sail on a private houseboat with sunset dinners and lush views. From: ₹11,000+ per couple.',
-      mood: 'romantic',
-      budget: 'high',
-      location: 'kerala'
+      title: 'Weekend Mountain Trek, Sahyadris',
+      desc: 'Guided night trek, sunrise view, mountain meals, and camping. ₹2,500–₹5,000.',
+      mood: 'adventurous',
+      budget: 'low',
+      location: 'mountain',
+      duration: [2]
     },
     {
-      title: 'Mountain Trek & Starry Skies, Ladakh',
-      desc: 'Conquer high passes, spend nights stargazing, and campfires with friends. Cost: ₹7,000–₹12,000.',
+      title: 'Desert Safari & Jeep Ride, Jaipur',
+      desc: '2-day adventure with jeep rides, desert camp stay, and folk shows. ₹5,500–₹8,500.',
       mood: 'adventurous',
       budget: 'medium',
-      location: 'ladakh'
+      location: 'jaipur',
+      duration: [2]
     },
     {
-      title: 'Heritage Jaipur Festival',
-      desc: 'Immerse in Jaipur’s palaces, local crafts, and dazzling festivals. Expect: ₹6,000–₹10,000.',
-      mood: 'festive',
+      title: 'Explore Leh, Ladakh Expeditions',
+      desc: 'Three days trekking, monastery visits, stargazing. Includes local homestays. ₹8,500–₹15,000.',
+      mood: 'adventurous',
       budget: 'medium',
-      location: 'jaipur'
+      location: 'ladakh',
+      duration: [3,4]
     },
+    // RELAXED
     {
-      title: 'Serene Tea Gardens, Darjeeling',
-      desc: 'Stay at a heritage plantation, enjoy tea tastings and sunrise on the hills. From: ₹4,000–₹7,000.',
-      mood: 'nature',
-      budget: 'medium',
-      location: 'darjeeling'
-    },
-    {
-      title: 'Wildlife Safari, Ranthambore',
-      desc: 'Go on a jungle safari, spot tigers and unwind in eco-lodges. Around ₹7,500–₹13,000.',
-      mood: 'nature',
-      budget: 'high',
-      location: 'wilderness'
-    },
-    {
-      title: 'Creative Photography Walk, Bangalore',
-      desc: 'Street art, city markets, and architectural hidden gems guided tour. Avg: ₹2,000–₹4,000.',
-      mood: 'creative',
+      title: 'Botanical Walk & Spa Retreat, Bangalore',
+      desc: 'Lalbagh visit, brunch, and afternoon at city spa. Great for a single day off! ₹1,500–₹3,500.',
+      mood: 'relaxed',
       budget: 'low',
-      location: 'bangalore'
+      location: 'bangalore',
+      duration: [1]
     },
     {
-      title: 'Festive Lights in Delhi',
-      desc: 'Experience festivals, food carnivals, and city lights with buzzing energy. Plan for ₹3,500–₹7,000.',
-      mood: 'festive',
-      budget: 'medium',
-      location: 'delhi'
-    },
-    {
-      title: 'Peaceful Lakeside Ooty',
-      desc: 'Wake up to misty mornings, go boating and stroll botanical gardens. From ₹5,000–₹10,000.',
+      title: 'Lakeside Stay, Ooty',
+      desc: 'Wake up to cool breeze, enjoy local pasties, boat ride, botanical gardens. ₹4,000–₹7,000.',
       mood: 'relaxed',
       budget: 'medium',
-      location: 'ooty'
+      location: 'ooty',
+      duration: [2,3]
     },
     {
-      title: 'Spontaneous Road Trip – The Open Road',
-      desc: 'Decide each stop as you go: flip a coin for left or right! Budget: ₹2,000–₹5,000.',
-      mood: 'spontaneous',
+      title: 'Luxury Countryside Villa Escape',
+      desc: '4-day stay at a heritage villa: lazy walks, foot trails, chef-prepared meal. From ₹18,000.',
+      mood: 'relaxed',
+      budget: 'high',
+      location: 'countryside',
+      duration: [4]
+    },
+    // ROMANTIC
+    {
+      title: 'Chic Brunch & Art Walk, Mumbai',
+      desc: 'Start with a scenic coastal brunch, then stroll through Kala Ghoda galleries. Under ₹3,000.',
+      mood: 'romantic',
       budget: 'low',
-      location: 'surprise'
+      location: 'mumbai',
+      duration: [1]
     },
     {
-      title: 'Artisan Village Tour, Countryside',
-      desc: 'Discover local crafts, pottery lessons, and tradition. Under ₹2,500.',
+      title: 'Beachside Candlelight Dinner, Goa',
+      desc: 'Romantic 2-day getaway, sunset dining, and relaxing at the shore. ₹7,000–₹14,000.',
+      mood: 'romantic',
+      budget: 'medium',
+      location: 'goa',
+      duration: [2]
+    },
+    {
+      title: 'Private Houseboat, Kerala Backwaters',
+      desc: 'Glide down palm-fringed canals, enjoy dinner onboard, 2-3 night romance. ₹12,000–₹20,000.',
+      mood: 'romantic',
+      budget: 'high',
+      location: 'kerala',
+      duration: [3,4]
+    },
+    // CULTURAL
+    {
+      title: 'Old City Heritage Walk, Delhi',
+      desc: 'Food walking tour: Chandni Chowk, heritage havelis, local bazaars. Day-trip: ₹1200–₹3,500.',
       mood: 'cultural',
       budget: 'low',
-      location: 'countryside'
+      location: 'delhi',
+      duration: [1]
+    },
+    {
+      title: 'Artisan Village Explorations',
+      desc: 'Pottery, weaving, and musical experience in nearby village clusters. ₹2,500–₹4,000.',
+      mood: 'cultural',
+      budget: 'low',
+      location: 'countryside',
+      duration: [1,2]
+    },
+    {
+      title: 'Festivals, Palaces & Bazaars, Jaipur',
+      desc: 'Immerse yourself in local crafts, ornate palaces, and light festivals. ₹6,000–₹10,000.',
+      mood: 'cultural',
+      budget: 'medium',
+      location: 'jaipur',
+      duration: [2,3]
+    },
+    // WELLNESS
+    {
+      title: 'Yoga Breakfast in the Park, Bangalore',
+      desc: 'Morning yoga session and healthy vegan brunch. ₹900–₹1,800.',
+      mood: 'wellness',
+      budget: 'low',
+      location: 'bangalore',
+      duration: [1]
+    },
+    {
+      title: 'Himalayan Meditation Retreat, Rishikesh',
+      desc: '2-3 day ashram stay, meditation and riverside peace. ₹4,000–₹8,000.',
+      mood: 'wellness',
+      budget: 'medium',
+      location: 'rishikesh',
+      duration: [2,3]
     },
     {
       title: 'Luxury Spa Getaway, Goa',
-      desc: 'Pamper yourself with ocean-view massages and gourmet meals. Expect: ₹13,000+.',
+      desc: 'Four days of massages, yoga, and oceanfront relaxation. ₹15,000+.',
       mood: 'wellness',
       budget: 'high',
-      location: 'goa'
+      location: 'goa',
+      duration: [4]
+    },
+    // FAMILY
+    {
+      title: 'Science Museum & Zoo, Bangalore',
+      desc: 'Kid-friendly day at the science center and animal feeding at the zoo. ₹800–₹2,500.',
+      mood: 'family',
+      budget: 'low',
+      location: 'bangalore',
+      duration: [1]
     },
     {
-      title: 'Family Safari Adventure — Rann of Kutch',
-      desc: 'Salt flats jeep rides, flamingo festivals, camel treks. Fun for all ages! From ₹9,000.',
+      title: 'Safari & Craftwork, Rann of Kutch',
+      desc: 'Jeep rides with salt-flat fun and souvenir making. ₹6,000–₹10,000.',
       mood: 'family',
       budget: 'medium',
-      location: 'rann'
+      location: 'rann',
+      duration: [2,3]
     },
     {
-      title: 'River Rafting Pulse, Rishikesh',
-      desc: 'Adrenaline-pumping rafting, cliff diving, and riverside camping. Cost: ₹3,000–₹6,000.',
-      mood: 'adventurous',
+      title: 'Week at Wonderland, Delhi & Agra',
+      desc: 'Visit theme parks, Taj Mahal & family resorts on a 4-day outing. ₹14,000–₹28,000.',
+      mood: 'family',
+      budget: 'high',
+      location: 'delhi',
+      duration: [4]
+    },
+    // FOODIE
+    {
+      title: 'Breakfast Crawl, Street Eats of Mumbai',
+      desc: 'Pav bhaji, vada pav, Irani cafes – morning food crawl for your inner foodie. ₹800–₹2,000.',
+      mood: 'foodie',
       budget: 'low',
-      location: 'rishikesh'
+      location: 'mumbai',
+      duration: [1]
     },
     {
-      title: 'Wellness Spa – Any Mountain Retreat',
-      desc: 'Therapeutic massages, hikes, and digital detox with towering views. Around ₹7,000–₹11,000.',
-      mood: 'wellness',
+      title: 'South Indian Food Roadtrip, Chennai to Pondicherry',
+      desc: 'A 2-day culinary drive: filter coffee, dosas, French cafes. ₹5,000–₹8,000.',
+      mood: 'foodie',
       budget: 'medium',
-      location: 'mountain'
+      location: 'pondicherry',
+      duration: [2]
     },
     {
-      title: 'City Shopping Spree, Delhi',
-      desc: 'Haute couture, street bazaars, and gourmet food stops. Budget: ₹5,000–₹12,000.',
-      mood: 'creative',
-      budget: 'medium',
-      location: 'delhi'
+      title: 'Gourmet Weekend in Goa',
+      desc: 'Modern Goan cuisine adventure, 4-day fine dining, and chef events. ₹20,000+.',
+      mood: 'foodie',
+      budget: 'high',
+      location: 'goa',
+      duration: [4]
     },
+    // SPONTANEOUS
     {
-      title: 'Solo Artist Retreat, Ooty',
-      desc: 'Private cabin, painting workshop, forest walks. Reconnect solo! ₹8,000–₹13,000.',
-      mood: 'solo',
-      budget: 'medium',
-      location: 'ooty'
-    },
-    {
-      title: 'Night Beach Carnival, Goa',
-      desc: 'Dance, music, fun games for all at the festive shore. From ₹6,000+.',
-      mood: 'festive',
-      budget: 'medium',
-      location: 'beach'
-    },
-    {
-      title: 'Sunset Beach Dinner',
-      desc: 'Enjoy a private sunset dinner with music and laughter right by the waves. From ₹5,000 upwards.',
-      mood: 'romantic',
-      budget: 'medium',
-      location: 'beach'
-    },
-    // Some generic 'Any...' style fallback options
-    {
-      title: 'Surprise Adventure!',
-      desc: 'Pack your bags for a mystery weekend – destination revealed by dice roll! Budget: flexible, often under ₹3,000.',
+      title: 'Flip-a-Coin City Adventure',
+      desc: 'Arrive at your nearest train station, board any local going anywhere! Budget: ₹1,500–₹3,000.',
       mood: 'spontaneous',
       budget: 'low',
-      location: 'surprise'
+      location: 'surprise',
+      duration: [1,2]
     },
     {
-      title: 'City Cultural Trail',
-      desc: 'Museums, galleries, and hidden music venues for inspiring weekends. ₹3,000–₹7,000.',
-      mood: 'cultural',
+      title: 'Mystery Group Getaway',
+      desc: 'Book a secret cabin/weekend stay—destination revealed last minute! ₹5,000–₹8,000.',
+      mood: 'spontaneous',
       budget: 'medium',
-      location: 'city'
+      location: 'surprise',
+      duration: [2,3]
     },
     {
-      title: 'Mountain Trekking Challenge',
-      desc: 'Test your limits on a guided mountain trek. Group discounts! Budget: ₹4,000–₹8,000.',
-      mood: 'adventurous',
-      budget: 'medium',
-      location: 'mountain'
-    },
-    {
-      title: 'Luxury Countryside Escape',
-      desc: 'Stay in a heritage villa with foot trails and gourmet food. From ₹12,000+.',
-      mood: 'relaxed',
+      title: 'Random Flight Finder',
+      desc: 'Go to airport, buy the cheapest ticket on the spot, and let the adventure begin. 4 days. ₹12,000+.',
+      mood: 'spontaneous',
       budget: 'high',
-      location: 'countryside'
+      location: 'surprise',
+      duration: [4]
+    },
+    // FESTIVE
+    {
+      title: 'Local Fair Day, Any Major City',
+      desc: 'Color, food stalls, music, and traditional contests. ₹1,000–₹2,500.',
+      mood: 'festive',
+      budget: 'low',
+      location: 'city',
+      duration: [1]
+    },
+    {
+      title: 'Diwali in Jaipur',
+      desc: 'Experience palace light-ups with festive food and fireworks. Two nights, ₹7,000–₹13,000.',
+      mood: 'festive',
+      budget: 'medium',
+      location: 'jaipur',
+      duration: [2,3]
+    },
+    // SOLO
+    {
+      title: 'Solo Meditation Day in Nature',
+      desc: 'Short escape to a nature park on your own. Journal by the pond. ~₹1,500.',
+      mood: 'solo',
+      budget: 'low',
+      location: 'mountain',
+      duration: [1]
+    },
+    {
+      title: 'Creative Solo Retreat, Ooty Cabin',
+      desc: 'Stay in a quiet hill cabin with art supplies and long nature walks. 2–3 days. ₹6,000–₹12,000.',
+      mood: 'solo',
+      budget: 'medium',
+      location: 'ooty',
+      duration: [2,3]
+    },
+    // CREATIVE
+    {
+      title: 'Street Art, Poetry & Coffee Trail',
+      desc: 'Spend the day uncovering murals, writer’s café, and poetry readings. ₹1,000–₹2,300.',
+      mood: 'creative',
+      budget: 'low',
+      location: 'delhi',
+      duration: [1]
+    },
+    {
+      title: 'Digital Detox Author Camp',
+      desc: 'Three quiet days in a mountain retreat—reading, writing, idea jams. ₹5,500–₹9,000.',
+      mood: 'creative',
+      budget: 'medium',
+      location: 'mountain',
+      duration: [3]
+    },
+    // NATURE
+    {
+      title: 'Early Morning Birdwatching, Local Wetlands',
+      desc: 'Nature walk, binoculars, and local chai. Daytrip, ₹800–₹1,500.',
+      mood: 'nature',
+      budget: 'low',
+      location: 'countryside',
+      duration: [1]
+    },
+    {
+      title: 'Tea Estate Stay in Darjeeling',
+      desc: 'Wander through tea gardens, mountain views, and local cuisine. 2–3 days, ₹5,000–₹9,000.',
+      mood: 'nature',
+      budget: 'medium',
+      location: 'darjeeling',
+      duration: [2,3]
     }
   ];
 
-  // Add .km to each sample (for distance checks)
+  // (Assign .km as before for distance check)
   const samplesWithDist = samples.map(s => ({
     ...s,
     km: getSampleDistance(s.location)
   }));
 
-  // Shuffle helper
   function shuffle(arr) {
     return arr.slice().sort(() => Math.random() - 0.5);
   }
 
-  // Parse tripDuration (as string: "1", "2", "3", or "4")
-  const duration = tripDuration ? String(tripDuration) : null;
-  // Parse travelDistance as int
+  // Parse tripDuration as integer, match entries with that duration if specified
+  const duration = tripDuration ? parseInt(tripDuration, 10) : null;
   const maxDistance = travelDistance ? parseInt(travelDistance, 10) : null;
 
-  // Sensible "max" per new durations (distance in km)
+  // Helper: whether the sample matches the intended trip day count
+  function matchesDuration(sample) {
+    if (!duration) return true;
+    // If sample.duration not present, consider it for fallback only
+    if (!sample.duration) return true;
+    return sample.duration.some(d => d === duration);
+  }
+
   function isPossibleForDuration(sample) {
     if (!duration) return true;
-    const d = parseInt(duration, 10);
-    if (d === 1) {
-      // Day trips: only very local (<~120km). In practice 0 or <=120km.
-      return sample.km === 0 || sample.km <= 120;
-    } else if (d === 2) {
-      // Only very local and regional (0, <=400km)
-      return sample.km === 0 || sample.km <= 400;
-    } else if (d === 3) {
-      // Up to ~2000km is plausible for an ambitious 3-day (esp. by flight)
-      return sample.km === 0 || sample.km <= 2000;
-    } else if (d === 4) {
-      // Up to ~2500-3000km for 4d weekends (flight or train)
-      return sample.km === 0 || sample.km <= 3000;
-    }
+    if (duration === 1) return sample.km === 0 || sample.km <= 120;
+    if (duration === 2) return sample.km === 0 || sample.km <= 400;
+    if (duration === 3) return sample.km === 0 || sample.km <= 2000;
+    if (duration === 4) return sample.km === 0 || sample.km <= 3000;
     return true;
   }
 
-  // If "spontaneous", just random and ignore constraints
+  // SPONTANEOUS mood: random & ignore constraints
   if (mood === 'spontaneous') {
-    return shuffle(samplesWithDist).slice(0, 3);
+    return shuffle(samplesWithDist.filter(matchesDuration)).slice(0, 3);
   }
 
-  // First strict filter: mood, budget, travelDistance, AND duration realism
-  let filtered = samplesWithDist.filter(s =>
-    (mood ? s.mood === mood : true) &&
-    (budget ? s.budget === budget : true) &&
-    (isPossibleForDuration(s)) &&
-    (
-      maxDistance
+  // Find samples matching all filters strictly (mood, budget, duration, distance range)
+  let filtered = samplesWithDist.filter(
+    s =>
+      (mood ? s.mood === mood : true) &&
+      (budget ? s.budget === budget : true) &&
+      matchesDuration(s) &&
+      isPossibleForDuration(s) &&
+      (maxDistance
         ? (s.km === 0 || s.km <= maxDistance)
-        : true
-    )
+        : true)
   );
 
-  // If too few, relax: allow entries that fit mood + duration + budget, even if distance is a bit above selected
+  // If not enough, relax: allow entries that fit mood, budget, matchesDuration (may slightly overshoot distance)
   if (filtered.length < 3) {
     filtered = filtered.concat(
-      shuffle(samplesWithDist.filter(s =>
-        (mood ? s.mood === mood : true) &&
-        (budget ? s.budget === budget : true) &&
-        isPossibleForDuration(s) &&
-        (maxDistance ? s.km > maxDistance : false)
-      )).slice(0, 3 - filtered.length)
+      shuffle(
+        samplesWithDist.filter(
+          s =>
+            (mood ? s.mood === mood : true) &&
+            (budget ? s.budget === budget : true) &&
+            matchesDuration(s) &&
+            (maxDistance ? s.km > maxDistance : false)
+        )
+      ).slice(0, 3 - filtered.length)
     );
   }
-  // If still too few, relax: allow mood + budget (skip duration constraint last)
+  // If still too few, allow only mood+budget
   if (filtered.length < 3) {
     filtered = filtered.concat(
-      shuffle(samplesWithDist.filter(s =>
-        (budget ? s.budget === budget : true) &&
-        (mood ? s.mood === mood : true)
-      )).slice(0, 3 - filtered.length)
+      shuffle(
+        samplesWithDist.filter(
+          s =>
+            (budget ? s.budget === budget : true) &&
+            (mood ? s.mood === mood : true)
+        )
+      ).slice(0, 3 - filtered.length)
     );
   }
 
