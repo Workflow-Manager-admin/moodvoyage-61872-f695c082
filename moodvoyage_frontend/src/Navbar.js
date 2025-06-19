@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import './App.css';
+import { Link } from 'react-router-dom';
 
 // PUBLIC_INTERFACE
 function Navbar() {
   /*
     Responsive Navbar for MoodVoyage.
-    - Uses theme colors: primary (#4A90E2), secondary (#50E3C2), accent (#F5A623)
-    - Links: Home, Trip Planner, Sign In (using placeholder buttons/anchors)
+    - React Router navigation via <Link> for Home, Trip Planner, Sign In
     - Collapses on mobile
+    - Clicking Home routes to "/"
   */
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -17,10 +18,10 @@ function Navbar() {
   return (
     <nav className="navbar moodvoyage-navbar">
       <div className="container navbar-content">
-        <a className="moodvoyage-logo" href="/" aria-label="Home">
+        <Link className="moodvoyage-logo" to="/" aria-label="Home" onClick={handleNavLinkClick}>
           <span className="logo-symbol">✈</span>
           MoodVoyage
-        </a>
+        </Link>
         {/* Hamburger icon for mobile */}
         <button
           className="navbar-hamburger"
@@ -38,31 +39,32 @@ function Navbar() {
             (mobileOpen ? ' navbar-actions-mobile-open' : '')
           }
         >
-          <a
-            href="/"
+          <Link
+            to="/"
             className="navbar-link"
             onClick={handleNavLinkClick}
             tabIndex={mobileOpen ? 0 : undefined}
           >
             Home
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/trip-planner"
             className="navbar-link"
             style={{ color: 'var(--mv-primary)' }}
             onClick={handleNavLinkClick}
             tabIndex={mobileOpen ? 0 : undefined}
           >
             Trip Planner
-          </a>
-          <button
+          </Link>
+          <Link
+            to="/sign-in"
             className="btn btn-auth"
-            style={{ minWidth: 90 }}
+            style={{ minWidth: 90, textDecoration: 'none', display: 'inline-block' }}
             onClick={handleNavLinkClick}
             tabIndex={mobileOpen ? 0 : undefined}
           >
             Sign In
-          </button>
+          </Link>
         </div>
       </div>
     </nav>

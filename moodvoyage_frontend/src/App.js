@@ -1,15 +1,44 @@
 import React from 'react';
 import './App.css';
 import Navbar from './Navbar';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './HomePage';
+
+// Simple placeholder Trip Planner page
+function TripPlannerPage() {
+  return (
+    <div className="container">
+      <section className="hero moodvoyage-hero">
+        <div className="subtitle">Trip Planner</div>
+        <h1 className="title">Start Planning Your Trip</h1>
+        <div className="description">
+          The trip planner page is under construction. Check back soon for full planning features!
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// Simple placeholder Sign-In page
+function SignInPage() {
+  return (
+    <div className="container">
+      <section className="hero moodvoyage-hero">
+        <div className="subtitle">Sign-In</div>
+        <h1 className="title">Access Your Account</h1>
+        <div className="description">
+          Sign in form coming soon!
+        </div>
+      </section>
+    </div>
+  );
+}
 
 // PUBLIC_INTERFACE
 function App() {
   /*
     Main Container for MoodVoyage:
-      - Light theme with custom colors
-      - Responsive navigation bar via Navbar component
-      - Placeholder for authentication, trip planner, dynamic suggestions
-      - Inviting homepage for micro-trip AI planner
+      - Uses React Router for multipage navigation (Home, Trip Planner, Sign-In)
   */
   return (
     <div className="app moodvoyage-theme">
@@ -17,33 +46,11 @@ function App() {
       <Navbar />
 
       <main>
-        <div className="container">
-          {/* Homepage Hero Section */}
-          <section className="hero moodvoyage-hero">
-            <div className="subtitle">AI-Powered Micro-Trip Planner</div>
-            <h1 className="title">Discover Your Ideal Weekend Getaway</h1>
-            <div className="description">
-              MoodVoyage helps you find the perfect trip for your mood, budget, and style. Let our AI inspire your next adventure!
-            </div>
-            <button className="btn btn-large btn-primary">Plan a Trip</button>
-          </section>
-
-          {/* Placeholders for Future Features */}
-          <section className="future-sections-grid">
-            <div className="future-section">
-              <h3 className="future-section-title">🔒 Authentication Coming Soon</h3>
-              <p className="future-section-desc">Secure sign-in & personalized experiences.</p>
-            </div>
-            <div className="future-section">
-              <h3 className="future-section-title">🧭 Navigation Bar</h3>
-              <p className="future-section-desc">Navigate easily between Home, Trip Planner, and Account.</p>
-            </div>
-            <div className="future-section">
-              <h3 className="future-section-title">🤖 AI Suggestions</h3>
-              <p className="future-section-desc">Let our AI suggest exciting trips based on your preferences.</p>
-            </div>
-          </section>
-        </div>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/trip-planner" element={<TripPlannerPage />} />
+          <Route path="/sign-in" element={<SignInPage />} />
+        </Routes>
       </main>
 
       {/* Background design in light mode */}
