@@ -43,6 +43,8 @@ function SignIn() {
     setErrors(validate(form));
   }
 
+  const navigate = useNavigate();
+
   function handleSubmit(e) {
     e.preventDefault();
     setTouched({ email: true, password: true });
@@ -50,8 +52,8 @@ function SignIn() {
     setErrors(validationErrors);
     setSubmitted(true);
     if (Object.keys(validationErrors).length === 0) {
-      // Will be replaced with actual authentication logic if needed
-      alert('Sign in successful! (Demo)');
+      // Replace alert with navigation to Home
+      navigate('/');
     }
   }
 
