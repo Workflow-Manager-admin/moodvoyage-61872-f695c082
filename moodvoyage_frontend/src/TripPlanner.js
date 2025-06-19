@@ -609,145 +609,149 @@ function TripPlanner() {
   };
 
   return (
-    <div className="container">
-      <section className="planner-section moodvoyage-hero" style={{ marginTop: 110, maxWidth: 510, zIndex: 1 }}>
-        <div className="subtitle" style={{ color: 'var(--mv-accent)' }}>Trip Planner</div>
-        <h1 className="title" style={{ fontSize: '2.1rem' }}>Plan Your Perfect Escape</h1>
-        <div className="description" style={{ marginBottom: 12 }}>
-          Tell us your preferences and let MoodVoyage inspire your next getaway!
-        </div>
-        <form
-          className="trip-form"
-          onSubmit={handleSubmit}
-          style={{ width: '100%', margin: '14px 0' }}
-          autoComplete="off"
-        >
-          {/* Trip Duration Selector */}
-          <div className="form-group" style={{ marginBottom: 14 }}>
-            <label htmlFor="tripDuration" className="planner-label">Trip Duration</label>
-            <select
-              id="tripDuration"
-              name="tripDuration"
-              value={form.tripDuration}
-              onChange={handleChange}
-              className="planner-input"
-              required
-              aria-label="Select trip duration"
-              disabled={loading}
-            >
-              {DURATION_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+    <div className="trip-planner-bg-wrapper">
+      <div className="trip-planner-bg-scenic" aria-hidden="true"></div>
+      <div className="trip-planner-bg-overlay" aria-hidden="true"></div>
+      <div className="container">
+        <section className="planner-section moodvoyage-hero" style={{ marginTop: 110, maxWidth: 510, zIndex: 1 }}>
+          <div className="subtitle" style={{ color: 'var(--mv-accent)' }}>Trip Planner</div>
+          <h1 className="title" style={{ fontSize: '2.1rem' }}>Plan Your Perfect Escape</h1>
+          <div className="description" style={{ marginBottom: 12 }}>
+            Tell us your preferences and let MoodVoyage inspire your next getaway!
           </div>
-          {/* Mood */}
-          <div className="form-group" style={{ marginBottom: 14 }}>
-            <label htmlFor="mood" className="planner-label">Mood</label>
-            <select
-              id="mood"
-              name="mood"
-              value={form.mood}
-              onChange={handleChange}
-              className="planner-input"
-              required
-              aria-label="Select your mood"
-              disabled={loading}
-            >
-              {MOODS.map(opt => (
-                <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          {/* Budget */}
-          <div className="form-group" style={{ marginBottom: 14 }}>
-            <label htmlFor="budget" className="planner-label">Budget</label>
-            <select
-              id="budget"
-              name="budget"
-              value={form.budget}
-              onChange={handleChange}
-              className="planner-input"
-              required
-              aria-label="Select your budget"
-              disabled={loading}
-            >
-              {BUDGETS.map(opt => (
-                <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          {/* Travel Distance Options Contextual to Duration */}
-          <div className="form-group" style={{ marginBottom: 16 }}>
-            <label htmlFor="travelDistance" className="planner-label">
-              Travel Distance
-              <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: "0.97em", marginLeft: 7 }}>
-                (one-way, approx.)
-              </span>
-            </label>
-            <select
-              id="travelDistance"
-              name="travelDistance"
-              value={form.travelDistance}
-              onChange={handleChange}
-              className="planner-input"
-              required
-              aria-label="Select travel distance"
-              disabled={loading || !form.tripDuration}
-            >
-              {/* Default if duration not selected */}
-              {!form.tripDuration
-                ? <option value="">Choose trip duration first</option>
-                : (DISTANCES_BY_DURATION[form.tripDuration] || []).map(opt =>
+          <form
+            className="trip-form"
+            onSubmit={handleSubmit}
+            style={{ width: '100%', margin: '14px 0' }}
+            autoComplete="off"
+          >
+            {/* Trip Duration Selector */}
+            <div className="form-group" style={{ marginBottom: 14 }}>
+              <label htmlFor="tripDuration" className="planner-label">Trip Duration</label>
+              <select
+                id="tripDuration"
+                name="tripDuration"
+                value={form.tripDuration}
+                onChange={handleChange}
+                className="planner-input"
+                required
+                aria-label="Select trip duration"
+                disabled={loading}
+              >
+                {DURATION_OPTIONS.map(opt => (
                   <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
                     {opt.label}
                   </option>
-                )
-              }
-            </select>
-          </div>
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="btn btn-large btn-primary"
+                ))}
+              </select>
+            </div>
+            {/* Mood */}
+            <div className="form-group" style={{ marginBottom: 14 }}>
+              <label htmlFor="mood" className="planner-label">Mood</label>
+              <select
+                id="mood"
+                name="mood"
+                value={form.mood}
+                onChange={handleChange}
+                className="planner-input"
+                required
+                aria-label="Select your mood"
+                disabled={loading}
+              >
+                {MOODS.map(opt => (
+                  <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Budget */}
+            <div className="form-group" style={{ marginBottom: 14 }}>
+              <label htmlFor="budget" className="planner-label">Budget</label>
+              <select
+                id="budget"
+                name="budget"
+                value={form.budget}
+                onChange={handleChange}
+                className="planner-input"
+                required
+                aria-label="Select your budget"
+                disabled={loading}
+              >
+                {BUDGETS.map(opt => (
+                  <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Travel Distance Options Contextual to Duration */}
+            <div className="form-group" style={{ marginBottom: 16 }}>
+              <label htmlFor="travelDistance" className="planner-label">
+                Travel Distance
+                <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: "0.97em", marginLeft: 7 }}>
+                  (one-way, approx.)
+                </span>
+              </label>
+              <select
+                id="travelDistance"
+                name="travelDistance"
+                value={form.travelDistance}
+                onChange={handleChange}
+                className="planner-input"
+                required
+                aria-label="Select travel distance"
+                disabled={loading || !form.tripDuration}
+              >
+                {/* Default if duration not selected */}
+                {!form.tripDuration
+                  ? <option value="">Choose trip duration first</option>
+                  : (DISTANCES_BY_DURATION[form.tripDuration] || []).map(opt =>
+                    <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
+                      {opt.label}
+                    </option>
+                  )
+                }
+              </select>
+            </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="btn btn-large btn-primary"
+              style={{
+                width: '100%',
+                marginTop: 8,
+                fontWeight: 600,
+                letterSpacing: 0.01,
+                background: 'linear-gradient(90deg, var(--mv-primary), var(--mv-accent))'
+              }}
+              disabled={loading}
+            >
+              {loading ? 'Working...' : 'Get Trip Suggestions'}
+            </button>
+          </form>
+          {/* Dynamic AI Suggestions */}
+          <div
+            className="ai-suggestions"
             style={{
+              background: 'rgba(74,144,226,0.05)',
+              marginTop: 20,
               width: '100%',
-              marginTop: 8,
-              fontWeight: 600,
-              letterSpacing: 0.01,
-              background: 'linear-gradient(90deg, var(--mv-primary), var(--mv-accent))'
-            }}
-            disabled={loading}
-          >
-            {loading ? 'Working...' : 'Get Trip Suggestions'}
-          </button>
-        </form>
-        {/* Dynamic AI Suggestions */}
-        <div
-          className="ai-suggestions"
-          style={{
-            background: 'rgba(74,144,226,0.05)',
-            marginTop: 20,
-            width: '100%',
-            borderRadius: 8,
-            minHeight: 75,
-            display: 'flex',
-            alignItems: hasSearched && !loading ? 'flex-start' : 'center',
-            justifyContent: 'center',
-            border: '1px solid var(--border-color)',
-            color: 'var(--mv-primary)',
-            fontWeight: 500,
-            fontSize: '1.07rem',
-            padding: hasSearched && !loading ? '17px 0' : '0'
-          }}>
-          {renderSuggestions()}
-        </div>
-      </section>
+              borderRadius: 8,
+              minHeight: 75,
+              display: 'flex',
+              alignItems: hasSearched && !loading ? 'flex-start' : 'center',
+              justifyContent: 'center',
+              border: '1px solid var(--border-color)',
+              color: 'var(--mv-primary)',
+              fontWeight: 500,
+              fontSize: '1.07rem',
+              padding: hasSearched && !loading ? '17px 0' : '0'
+            }}>
+            {renderSuggestions()}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,51 @@
+.trip-planner-bg-wrapper {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+.trip-planner-bg-scenic {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  /* CSS scenic illustration: stylized sky gradient + subtle clouds + landmark shapes */
+  background:
+    /* Distant mountain */
+    linear-gradient(to top, rgba(51,135,187,0.15) 66%, transparent 75%) bottom,
+    /* Beach/road strip */
+    linear-gradient(0deg, rgba(245,166,35,0.11) 0%, transparent 50%) 100%,
+    /* Sky with subtle color blend */
+    linear-gradient(120deg, #7ed1fa 0%, #c3ecff 47%, #e3f6fd 100%);
+  background-repeat: no-repeat;
+  background-size:
+    100% 33vw,
+    100% 16vw,
+    cover;
+  pointer-events: none;
+}
+.trip-planner-bg-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(249, 252, 255, 0.52);
+  backdrop-filter: blur(1.5px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* The Trip Planner main section must be above overlays and use elegant white for form area */
 .planner-section {
   background: var(--mv-bg-white);
   box-shadow: 0 4px 28px 0 rgba(74,144,226,0.07);
   border-radius: 20px;
   padding: 36px 32px 32px 32px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 .trip-form {
