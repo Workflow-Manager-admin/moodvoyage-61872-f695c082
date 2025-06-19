@@ -610,7 +610,13 @@ function TripPlanner() {
 
   return (
     <div className="trip-planner-bg-wrapper">
-      <div className="trip-planner-bg-scenic" aria-hidden="true"></div>
+      {/* Scenic photographic background */}
+      <div
+        className="trip-planner-photo-bg"
+        aria-hidden="true"
+        role="presentation"
+        tabIndex={-1}
+      ></div>
       <div className="trip-planner-bg-overlay" aria-hidden="true"></div>
       <div className="container">
         <section className="planner-section moodvoyage-hero" style={{ marginTop: 110, maxWidth: 510, zIndex: 1 }}>

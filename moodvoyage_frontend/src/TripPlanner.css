@@ -5,39 +5,33 @@
   overflow: hidden;
   z-index: 0;
 }
-.trip-planner-bg-scenic {
+
+/* Scenic Unsplash photo as fullscreen background for Trip Planner */
+.trip-planner-photo-bg {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
+  top: 0;
+  left: 0;
   height: 100vh;
+  width: 100vw;
   z-index: 0;
-  /* CSS scenic illustration: stylized sky gradient + subtle clouds + landmark shapes */
-  background:
-    /* Distant mountain */
-    linear-gradient(to top, rgba(51,135,187,0.15) 66%, transparent 75%) bottom,
-    /* Beach/road strip */
-    linear-gradient(0deg, rgba(245,166,35,0.11) 0%, transparent 50%) 100%,
-    /* Sky with subtle color blend */
-    linear-gradient(120deg, #7ed1fa 0%, #c3ecff 47%, #e3f6fd 100%);
-  background-repeat: no-repeat;
-  background-size:
-    100% 33vw,
-    100% 16vw,
-    cover;
   pointer-events: none;
+  background: url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80") center center / cover no-repeat;
+  transition: background-image 0.5s;
 }
+
+/* Strong, but semi-transparent overlay for readability */
 .trip-planner-bg-overlay {
   position: fixed;
   top: 0; left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(249, 252, 255, 0.52);
-  backdrop-filter: blur(1.5px);
+  background: rgba(34, 48, 65, 0.49); /* moderately strong for text readability */
+  backdrop-filter: blur(2.5px) brightness(1.08);
   z-index: 1;
   pointer-events: none;
 }
 
-/* The Trip Planner main section must be above overlays and use elegant white for form area */
+/* The Trip Planner main section must be above overlays and uses elegant white for form area */
 .planner-section {
   background: var(--mv-bg-white);
   box-shadow: 0 4px 28px 0 rgba(74,144,226,0.07);
@@ -89,11 +83,18 @@
   min-height: 65px;
 }
 
+/* Responsive adjustments for mobile devices */
 @media (max-width: 600px) {
   .planner-section {
     padding: 25px 8px 19px 8px;
   }
   .trip-form {
     gap: 0.14rem;
+  }
+  .trip-planner-photo-bg,
+  .trip-planner-bg-overlay {
+    /* Make overlay a bit more dense for clarity on small screens */
+    background: rgba(34, 48, 65, 0.61) !important;
+    backdrop-filter: blur(2.5px) brightness(1.09);
   }
 }
