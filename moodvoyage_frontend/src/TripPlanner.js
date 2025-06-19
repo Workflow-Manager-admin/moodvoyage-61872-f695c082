@@ -28,14 +28,25 @@ const BUDGETS = [
   { value: 'high', label: 'High (₹₹₹)' }
 ];
 
-// PUBLIC_INTERFACE
-// Defines distance options per trip duration (in kilometers).
+/* PUBLIC_INTERFACE
+  Defines distance options per trip duration (in kilometers).
+  Now includes 1-day & 4-day, in addition to 2/3-day options.
+*/
 const DURATION_OPTIONS = [
   { value: '', label: 'Select trip duration' },
+  { value: '1', label: '1-day (Day Trip)' },
   { value: '2', label: '2-day Weekend' },
-  { value: '3', label: '3-day Weekend' }
+  { value: '3', label: '3-day Weekend' },
+  { value: '4', label: '4-day Short Escape' }
 ];
 const DISTANCES_BY_DURATION = {
+  "1": [
+    { value: '', label: 'Select distance' },
+    { value: '20', label: 'Within 20 km (In-city/Lunch outing)' },
+    { value: '50', label: 'Within 50 km (Very local)' },
+    { value: '120', label: 'Within 120 km (Up to 2hr drive/train)' }
+    // For 1-day, max ~120km typically.
+  ],
   "2": [
     { value: '', label: 'Select distance' },
     { value: '50', label: 'Within 50 km (Very local)' },
@@ -51,6 +62,15 @@ const DISTANCES_BY_DURATION = {
     { value: '1000', label: 'Up to 1000 km (Across region)' },
     { value: '3000', label: '3000+ km (Anywhere in India)' }
     // For 3-day, longer trips fit better
+  ],
+  "4": [
+    { value: '', label: 'Select distance' },
+    { value: '150', label: 'Within 150 km (Regional/relaxed roadtrip)' },
+    { value: '400', label: 'Within 400 km (Classic short trip)' },
+    { value: '1000', label: 'Up to 1000 km (Broader region)' },
+    { value: '2500', label: 'Up to 2500 km (Cross-country possible)' },
+    { value: '3000', label: '3000+ km (Pan India)' }
+    // Up to 2500-3000km can work for 4d
   ]
 };
 
@@ -290,22 +310,27 @@ function fakeAISuggestions({ mood, budget, travelDistance, tripDuration }) {
     return arr.slice().sort(() => Math.random() - 0.5);
   }
 
-  // Parse tripDuration (as string "2" or "3")
+  // Parse tripDuration (as string: "1", "2", "3", or "4")
   const duration = tripDuration ? String(tripDuration) : null;
   // Parse travelDistance as int
   const maxDistance = travelDistance ? parseInt(travelDistance, 10) : null;
 
-  // Determine sensible "upper max distance" for strict, trip-duration matching
-  // For 2-day: 400km max (hard cutoff); for 3-day: max as per user-selected, but don't suggest 2 or 3-day trips for 2000km+ unless "spontaneous"
-  // We'll prevent suggesting > 400km for 2-day trips
+  // Sensible "max" per new durations (distance in km)
   function isPossibleForDuration(sample) {
     if (!duration) return true;
-    if (duration === "2") {
+    const d = parseInt(duration, 10);
+    if (d === 1) {
+      // Day trips: only very local (<~120km). In practice 0 or <=120km.
+      return sample.km === 0 || sample.km <= 120;
+    } else if (d === 2) {
       // Only very local and regional (0, <=400km)
       return sample.km === 0 || sample.km <= 400;
-    } else if (duration === "3") {
-      // Up to 1500-2000km is still plausible for 3-day (if user-selected)
+    } else if (d === 3) {
+      // Up to ~2000km is plausible for an ambitious 3-day (esp. by flight)
       return sample.km === 0 || sample.km <= 2000;
+    } else if (d === 4) {
+      // Up to ~2500-3000km for 4d weekends (flight or train)
+      return sample.km === 0 || sample.km <= 3000;
     }
     return true;
   }
@@ -356,9 +381,9 @@ function fakeAISuggestions({ mood, budget, travelDistance, tripDuration }) {
   TripPlanner component with support for weekend duration (2 or 3 days).
 */
 function TripPlanner() {
-  // State for form data (including tripDuration)
+  // State for form data (now with more flexible durations)
   const [form, setForm] = useState({
-    tripDuration: '', // "2" or "3"
+    tripDuration: '', // "1", "2", "3", "4"
     mood: '',
     budget: '',
     travelDistance: '',
@@ -557,7 +582,7 @@ function TripPlanner() {
               {/* Default if duration not selected */}
               {!form.tripDuration
                 ? <option value="">Choose trip duration first</option>
-                : DISTANCES_BY_DURATION[form.tripDuration].map(opt =>
+                : (DISTANCES_BY_DURATION[form.tripDuration] || []).map(opt =>
                   <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
                     {opt.label}
                   </option>
