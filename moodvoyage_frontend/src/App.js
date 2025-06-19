@@ -1,30 +1,20 @@
 import React from 'react';
 import './App.css';
+import Navbar from './Navbar';
 
 // PUBLIC_INTERFACE
 function App() {
   /*
     Main Container for MoodVoyage:
       - Light theme with custom colors
-      - Responsive navigation bar
+      - Responsive navigation bar via Navbar component
       - Placeholder for authentication, trip planner, dynamic suggestions
       - Inviting homepage for micro-trip AI planner
   */
   return (
     <div className="app moodvoyage-theme">
       {/* Navigation Bar */}
-      <nav className="navbar moodvoyage-navbar">
-        <div className="container navbar-content">
-          <div className="logo moodvoyage-logo">
-            <span className="logo-symbol" style={{ color: 'var(--mv-accent)' }}>✈</span>
-            MoodVoyage
-          </div>
-          <div className="navbar-actions">
-            {/* Placeholder for navigation - add routing later */}
-            <button className="btn btn-auth">Sign In</button>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main>
         <div className="container">
