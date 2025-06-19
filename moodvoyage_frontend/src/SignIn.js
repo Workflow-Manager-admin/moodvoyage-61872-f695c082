@@ -81,19 +81,13 @@ function SignIn() {
         className="moodvoyage-hero"
         style={{ marginTop: 110, maxWidth: 440, zIndex: 1 }}
       >
-        <div className="subtitle" style={{ color: 'var(--mv-accent)' }}>
-          Sign In
-        </div>
-        <h1 className="title" style={{ fontSize: '2.1rem' }}>
-          Access Your MoodVoyage Account
-        </h1>
         <form
           onSubmit={handleSubmit}
           style={{
             display: 'flex',
             flexDirection: 'column',
             gap: 17,
-            margin: '16px 0 0 0',
+            margin: '0',
             width: '100%',
           }}
           autoComplete="off"
