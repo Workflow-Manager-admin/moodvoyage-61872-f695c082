@@ -100,7 +100,12 @@ function getSampleDistance(loc) {
   PUBLIC_INTERFACE
   Trip suggestion logic using mood, budget, and travelDistance for relevant hints!
 */
-function fakeAISuggestions({ mood, budget, travelDistance }) {
+/*
+  PUBLIC_INTERFACE
+  Enhanced suggestion logic matching both trip duration and travel distance.
+  Duration and distance together ensure plausible options for real weekend getaways.
+*/
+function fakeAISuggestions({ mood, budget, travelDistance, tripDuration }) {
   // If user is "spontaneous", skip all filters and show a surprise!
   const samples = [
     {
@@ -274,7 +279,7 @@ function fakeAISuggestions({ mood, budget, travelDistance }) {
     }
   ];
 
-  // Give every sample an effectiveDistance (km)
+  // Add .km to each sample (for distance checks)
   const samplesWithDist = samples.map(s => ({
     ...s,
     km: getSampleDistance(s.location)
@@ -285,42 +290,60 @@ function fakeAISuggestions({ mood, budget, travelDistance }) {
     return arr.slice().sort(() => Math.random() - 0.5);
   }
 
-  // If "spontaneous", just random
+  // Parse tripDuration (as string "2" or "3")
+  const duration = tripDuration ? String(tripDuration) : null;
+  // Parse travelDistance as int
+  const maxDistance = travelDistance ? parseInt(travelDistance, 10) : null;
+
+  // Determine sensible "upper max distance" for strict, trip-duration matching
+  // For 2-day: 400km max (hard cutoff); for 3-day: max as per user-selected, but don't suggest 2 or 3-day trips for 2000km+ unless "spontaneous"
+  // We'll prevent suggesting > 400km for 2-day trips
+  function isPossibleForDuration(sample) {
+    if (!duration) return true;
+    if (duration === "2") {
+      // Only very local and regional (0, <=400km)
+      return sample.km === 0 || sample.km <= 400;
+    } else if (duration === "3") {
+      // Up to 1500-2000km is still plausible for 3-day (if user-selected)
+      return sample.km === 0 || sample.km <= 2000;
+    }
+    return true;
+  }
+
+  // If "spontaneous", just random and ignore constraints
   if (mood === 'spontaneous') {
     return shuffle(samplesWithDist).slice(0, 3);
   }
 
-  // Parse travelDistance as int
-  const maxDistance = travelDistance ? parseInt(travelDistance, 10) : null;
-
-  // Main, strict filter: mood, budget, distance must be satisfied
+  // First strict filter: mood, budget, travelDistance, AND duration realism
   let filtered = samplesWithDist.filter(s =>
     (mood ? s.mood === mood : true) &&
     (budget ? s.budget === budget : true) &&
+    (isPossibleForDuration(s)) &&
     (
       maxDistance
-        ? (s.km === 0 || s.km <= maxDistance) // 0 = local/city
+        ? (s.km === 0 || s.km <= maxDistance)
         : true
     )
   );
 
-  // Add broader matches if too few
+  // If too few, relax: allow entries that fit mood + duration + budget, even if distance is a bit above selected
   if (filtered.length < 3) {
-    // Relax distance (still require mood + budget)
     filtered = filtered.concat(
       shuffle(samplesWithDist.filter(s =>
         (mood ? s.mood === mood : true) &&
         (budget ? s.budget === budget : true) &&
+        isPossibleForDuration(s) &&
         (maxDistance ? s.km > maxDistance : false)
       )).slice(0, 3 - filtered.length)
     );
   }
+  // If still too few, relax: allow mood + budget (skip duration constraint last)
   if (filtered.length < 3) {
-    // Relax mood, just any in budget and distance
     filtered = filtered.concat(
       shuffle(samplesWithDist.filter(s =>
         (budget ? s.budget === budget : true) &&
-        (maxDistance ? (s.km === 0 || s.km <= maxDistance) : true)
+        (mood ? s.mood === mood : true)
       )).slice(0, 3 - filtered.length)
     );
   }
@@ -366,7 +389,8 @@ function TripPlanner() {
     setSuggestions([]);
 
     setTimeout(() => {
-      const result = fakeAISuggestions(form);
+      // Spread form (including tripDuration) to fakeAISuggestions
+      const result = fakeAISuggestions({ ...form });
       setSuggestions(result);
       setLoading(false);
     }, 1250);
