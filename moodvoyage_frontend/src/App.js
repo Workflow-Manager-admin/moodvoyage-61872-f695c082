@@ -5,21 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './HomePage';
 import TripPlanner from './TripPlanner';
 import './TripPlanner.css';
-
-// Simple placeholder Sign-In page
-function SignInPage() {
-  return (
-    <div className="container">
-      <section className="hero moodvoyage-hero">
-        <div className="subtitle">Sign-In</div>
-        <h1 className="title">Access Your Account</h1>
-        <div className="description">
-          Sign in form coming soon!
-        </div>
-      </section>
-    </div>
-  );
-}
+import SignIn from './SignIn';
 
 /*
   PUBLIC_INTERFACE
@@ -36,7 +22,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/planner" element={<TripPlanner />} />
-          <Route path="/sign-in" element={<SignInPage />} />
+          {/* Unify route naming: use `/signin` and update Navbar to match */}
+          <Route path="/signin" element={<SignIn />} />
         </Routes>
       </main>
 

@@ -57,7 +57,7 @@ function Navbar() {
             Trip Planner
           </Link>
           <Link
-            to="/sign-in"
+            to="/signin"
             className="btn btn-auth"
             style={{ minWidth: 90, textDecoration: 'none', display: 'inline-block' }}
             onClick={handleNavLinkClick}
