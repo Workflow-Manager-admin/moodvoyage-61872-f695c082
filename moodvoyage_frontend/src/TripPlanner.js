@@ -28,39 +28,64 @@ const BUDGETS = [
   { value: 'high', label: 'High (₹₹₹)' }
 ];
 
-/*
-  Expanded and more realistic set of possible destinations/topics.
-  - Now includes major Indian cities as well as regional, nature, and surprise categories.
-*/
-const LOCATIONS = [
-  { value: '', label: 'Anywhere' },
-  { value: 'mumbai', label: 'Mumbai' },
-  { value: 'goa', label: 'Goa' },
-  { value: 'bangalore', label: 'Bangalore' },
-  { value: 'delhi', label: 'Delhi' },
-  { value: 'jaipur', label: 'Jaipur' },
-  { value: 'kerala', label: 'Kerala (Backwaters)' },
-  { value: 'ladakh', label: 'Ladakh' },
-  { value: 'darjeeling', label: 'Darjeeling' },
-  { value: 'varanasi', label: 'Varanasi' },
-  { value: 'rann', label: 'Rann of Kutch' },
-  { value: 'rishikesh', label: 'Rishikesh' },
-  { value: 'ooty', label: 'Ooty Hills' },
-  { value: 'beach', label: 'Any Beach' },
-  { value: 'mountain', label: 'Any Mountain' },
-  { value: 'festival', label: 'Festival Hotspot' },
-  { value: 'wilderness', label: 'Wildlife/Nature Park' },
-  { value: 'heritage', label: 'Heritage Site' },
-  { value: 'countryside', label: 'Countryside Retreat' },
-  { value: 'surprise', label: 'Surprise Me!' }
+// Distance buckets in kilometers
+const DISTANCES = [
+  { value: '', label: 'Select distance' },
+  { value: '50', label: 'Within 50 km (Local)' },
+  { value: '150', label: 'Within 150 km (Short drive/train)' },
+  { value: '400', label: 'Within 400 km (Long weekend trip)' },
+  { value: '1000', label: 'Up to 1000 km (Across region)' },
+  { value: '3000', label: '3000+ km (Anywhere in India)' }
 ];
+
+// Helper to assign "distance" attribute (km) to samples depending on location
+function getSampleDistance(loc) {
+  switch (loc) {
+    case 'mumbai':
+    case 'bangalore':
+    case 'delhi':
+      return 0;
+    case 'goa':
+      return 400;
+    case 'rishikesh':
+    case 'ooty':
+      return 350;
+    case 'jaipur':
+    case 'darjeeling':
+      return 1500;
+    case 'kerala':
+    case 'ladakh':
+    case 'varanasi':
+      return 2000;
+    case 'rann':
+      return 900;
+    case 'wilderness':
+      return 500;
+    case 'beach':
+      return 250;
+    case 'mountain':
+      return 300;
+    case 'festival':
+      return 200;
+    case 'heritage':
+      return 350;
+    case 'countryside':
+      return 250;
+    case 'surprise':
+      return 0; // Special bucket for "surprise", ignores distance
+    case 'city':
+      return 0;
+    default:
+      return 2000;
+  }
+}
 
 /*
   PUBLIC_INTERFACE
-  Expanded AI-like trip suggestion logic.
-  Includes more moods, locations, and broader matching for engaging, relevant trip ideas.
+  Trip suggestion logic using mood, budget, and travelDistance for relevant hints!
 */
-function fakeAISuggestions({ mood, budget, location }) {
+function fakeAISuggestions({ mood, budget, travelDistance }) {
+  // If user is "spontaneous", skip all filters and show a surprise!
   const samples = [
     {
       title: 'Urban Foodie Adventure, Mumbai',
@@ -233,47 +258,67 @@ function fakeAISuggestions({ mood, budget, location }) {
     }
   ];
 
+  // Give every sample an effectiveDistance (km)
+  const samplesWithDist = samples.map(s => ({
+    ...s,
+    km: getSampleDistance(s.location)
+  }));
+
   // Shuffle helper
   function shuffle(arr) {
     return arr.slice().sort(() => Math.random() - 0.5);
   }
 
-  // Tiered filter: First, try all 3 params, then relax location, then mood only
-  let filtered = samples.filter(s =>
+  // If "spontaneous", just random
+  if (mood === 'spontaneous') {
+    return shuffle(samplesWithDist).slice(0, 3);
+  }
+
+  // Parse travelDistance as int
+  const maxDistance = travelDistance ? parseInt(travelDistance, 10) : null;
+
+  // Main, strict filter: mood, budget, distance must be satisfied
+  let filtered = samplesWithDist.filter(s =>
     (mood ? s.mood === mood : true) &&
     (budget ? s.budget === budget : true) &&
-    (location && location !== '' ? (s.location === location || location === 'city' && ['mumbai','delhi','bangalore'].includes(s.location)) : true)
+    (
+      maxDistance
+        ? (s.km === 0 || s.km <= maxDistance) // 0 = local/city
+        : true
+    )
   );
+
   // Add broader matches if too few
   if (filtered.length < 3) {
-    // Try relaxing location constraint
-    filtered = filtered.concat(shuffle(samples.filter(s =>
-      (mood ? s.mood === mood : true) &&
-      (budget ? s.budget === budget : true) &&
-      (location ? s.location !== location : true)
-    )).slice(0, 3 - filtered.length));
+    // Relax distance (still require mood + budget)
+    filtered = filtered.concat(
+      shuffle(samplesWithDist.filter(s =>
+        (mood ? s.mood === mood : true) &&
+        (budget ? s.budget === budget : true) &&
+        (maxDistance ? s.km > maxDistance : false)
+      )).slice(0, 3 - filtered.length)
+    );
   }
   if (filtered.length < 3) {
-    // Try relaxing mood constraint, at least matching budget
-    filtered = filtered.concat(shuffle(samples.filter(s =>
-      (budget ? s.budget === budget : true)
-    )).slice(0, 3 - filtered.length));
+    // Relax mood, just any in budget and distance
+    filtered = filtered.concat(
+      shuffle(samplesWithDist.filter(s =>
+        (budget ? s.budget === budget : true) &&
+        (maxDistance ? (s.km === 0 || s.km <= maxDistance) : true)
+      )).slice(0, 3 - filtered.length)
+    );
   }
-  // If user picked surprise: just 3 random ideas
-  if (location === 'surprise' || mood === 'spontaneous') {
-    filtered = shuffle(samples).slice(0, 3);
-  }
-  // Always return randomized
+
   return shuffle(filtered).slice(0, 3);
 }
 
 // PUBLIC_INTERFACE
 function TripPlanner() {
-  // State for user form data
+  // State for user form data, now with travelDistance instead of location
   const [form, setForm] = useState({
     mood: '',
     budget: '',
-    location: '',
+    travelDistance: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -414,18 +459,23 @@ function TripPlanner() {
             </select>
           </div>
           <div className="form-group" style={{ marginBottom: 16 }}>
-            <label htmlFor="location" className="planner-label">Location</label>
+            <label htmlFor="travelDistance" className="planner-label">
+              Travel Distance
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: "0.97em", marginLeft: 7 }}>
+                (one-way, approx.)
+              </span>
+            </label>
             <select
-              id="location"
-              name="location"
-              value={form.location}
+              id="travelDistance"
+              name="travelDistance"
+              value={form.travelDistance}
               onChange={handleChange}
               className="planner-input"
               required
-              aria-label="Select your location preference"
+              aria-label="Select travel distance"
               disabled={loading}
             >
-              {LOCATIONS.map(opt => (
+              {DISTANCES.map(opt => (
                 <option key={opt.value} value={opt.value} disabled={opt.value === ''}>
                   {opt.label}
                 </option>
